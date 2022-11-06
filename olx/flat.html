@@ -145,6 +145,38 @@ function MoveSlider(targetElem, possition)
 	}
 }
 
+
+
+var touchstartX = 0;
+var touchendX = 0;
+    
+function CheckSwipeSlider(e) {
+  if (touchendX < touchstartX) MoveSlider(e.target, 1);
+  if (touchendX > touchstartX) MoveSlider(e.target, -1);
+  
+  touchstartX = 0;
+  touchendX = 0;
+}
+
+function AddSwipeEnets()
+{
+
+let imgNodes = document.querySelectorAll('img');
+
+imgNodes.forEach((el) => {
+el.addEventListener('touchstart', e => {
+  touchstartX = e.changedTouches[0].screenX
+})
+
+el.addEventListener('touchend', e => {
+  touchendX = e.changedTouches[0].screenX
+  CheckSwipeSlider(e);
+});
+});
+
+}
+
+
 var TagsMap = 
 [
 ['#ДАЛЕКО', 'харьковское шоссе', 'харьківське шосе', 'тростянецкая', 'тростянецька', 'заречная', 'зарічна'],
@@ -184,7 +216,7 @@ function GenerateSlots(slots, showRieltors)
 slots.forEach((slot) => {
 
 if((showRieltors || slot.IsOwner === true) && !slot.IsAd) {
-let tags = [...new Set([...GetTags(slot.title) ,...GetTags(slot.description)])];
+let tags = [...new Set([...[slot.IsOwner === true? '#Власник' : '#Ріелтор'], ...GetTags(slot.title) ,...GetTags(slot.description)])];
 
 const newSlotEl = document.createElement("div");
 					newSlotEl.className = 'slot';
