@@ -89,12 +89,16 @@ var TicketsList = {"Data":[{"id":734742749,"url":"https://www.olx.ua/d/uk/obyavl
 
 function OnLoadPage()
 {
-fetch('flat.json')
+
+let params = (new URL(document.location)).searchParams;
+let jsonFile = params.get('data') || 'flat.json';
+let showRieltors = params.get('rieltors') == 1;
+fetch(jsonFile)
   .then((response) => response.json())
   .then((data) => 
   {
 	TicketsList = data;
-	GenerateSlots(data.Data);
+	GenerateSlots(data.Data, showRieltors);
   });
   
 	//GenerateSlots(TicketsList.Data);
@@ -175,11 +179,11 @@ function GetTags(str)
 }
 
 
-function GenerateSlots(slots)
+function GenerateSlots(slots, showRieltors)
 {
 slots.forEach((slot) => {
 
-if(slot.IsOwner === true && !slot.IsAd) {
+if((showRieltors || slot.IsOwner === true) && !slot.IsAd) {
 let tags = [...new Set([...GetTags(slot.title) ,...GetTags(slot.description)])];
 
 const newSlotEl = document.createElement("div");
@@ -191,7 +195,8 @@ const newSlotEl = document.createElement("div");
 					.replace("{{Title}}",slot.title)
 					.replace("{{ImgUrl}}",slot.photos[0].link.replace('{width}','1000').replace('{height}', '1000'))
 					.replace("{{Tags}}",tags.join(' '))
-					.replace("{{Price}}", slot.params.find(x=> x.key='price').value.label);
+					.replace("{{Price}}", slot.params.find(x=> x.key='price').value.label)
+					.replace("{{SliderInfo}}", '1/'+ slot.photos.length);
 					
 document.body.appendChild(newSlotEl);	
 }			
@@ -213,7 +218,7 @@ var SlotTemplate = `
 <tr>
 <td>{{Price}}</td>
 <td><a href="javascript:void(0);" onclick="SliderLeft(this)"><<<</a></td>
-<td class="sliderpage">1/9</td>
+<td class="sliderpage">{{SliderInfo}}</td>
 <td><a href="javascript:void(0);" onclick="SliderRight(this)" >>>></a></td>
 <tr>
 </table>
