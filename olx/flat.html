@@ -149,13 +149,25 @@ function MoveSlider(targetElem, possition)
 
 var touchstartX = 0;
 var touchendX = 0;
+var touchstartY = 0;
+var touchendY = 0;
     
 function CheckSwipeSlider(e) {
-  if (touchendX < touchstartX) MoveSlider(e.target, 1);
-  if (touchendX > touchstartX) MoveSlider(e.target, -1);
+	
+	//console.log(Math.abs( touchendX - touchstartX ));
+	
+	let diffX = Math.abs( touchendX - touchstartX );
+	if( diffX > 30 && diffX > Math.abs( touchstartY -  touchendY))
+	{
+		if (touchendX < touchstartX) MoveSlider(e.target, 1);
+		if (touchendX > touchstartX) MoveSlider(e.target, -1);
+	}
+
   
   touchstartX = 0;
   touchendX = 0;
+  touchstartY = 0;
+  touchendY = 0;
 }
 
 function AddSwipeEnets()
@@ -166,10 +178,12 @@ let imgNodes = document.querySelectorAll('img');
 imgNodes.forEach((el) => {
 el.addEventListener('touchstart', e => {
   touchstartX = e.changedTouches[0].screenX
+  touchstartY = e.changedTouches[0].screenY
 })
 
 el.addEventListener('touchend', e => {
   touchendX = e.changedTouches[0].screenX
+  touchendY = e.changedTouches[0].screenY
   CheckSwipeSlider(e);
 });
 });
@@ -234,8 +248,6 @@ document.body.appendChild(newSlotEl);
 }			
 
 });
-
-AddSwipeEnets();
 
 }
 
