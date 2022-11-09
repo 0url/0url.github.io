@@ -271,7 +271,7 @@ document.body.appendChild(newSlotEl);
 });
 
 AddSwipeEvents();
-
+setTimeout(function() {
 if(MarkId && document.getElementById(MarkId))
 {
 document.getElementById(MarkId).scrollIntoView({
@@ -280,6 +280,7 @@ document.getElementById(MarkId).scrollIntoView({
             inline: 'center'
         });
 }
+}, 500);
 
 }
 
