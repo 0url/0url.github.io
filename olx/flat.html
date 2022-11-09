@@ -249,10 +249,10 @@ newSlotEl.className = 'slot';
 if(MarkId && MarkId == slot.id)
 {
 newSlotEl.setAttribute('ismark', '1');
-if(index > 0)
+/*if(index > 0)
 {
 MarkId = slots[index-1].id;
-}
+}*/
 }
 					
 					
@@ -274,7 +274,11 @@ AddSwipeEvents();
 
 if(MarkId && document.getElementById(MarkId))
 {
-document.getElementById(MarkId).scrollIntoView({behavior: 'smooth'});
+document.getElementById(MarkId).scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'center'
+        });
 }
 
 }
