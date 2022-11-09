@@ -254,7 +254,20 @@ newSlotEl.setAttribute('ismark', '1');
 MarkId = slots[index-1].id;
 }*/
 }
-					
+		
+
+let priceObj = slot.params.find(x=> x.key='price').value;		
+let priceStr =priceObj.label;
+
+if(priceObj.arranged === true)
+{
+priceStr+=' (д)'
+}
+
+if(priceObj.previous_value)
+{
+priceStr+= +' (було'+ priceObj.previous_value + ')';
+}
 					
 					newSlotEl.id = slot.id;
 					newSlotEl.innerHTML = SlotTemplate
@@ -262,7 +275,7 @@ MarkId = slots[index-1].id;
 					.replace("{{Title}}",slot.title)
 					.replace("{{ImgUrl}}",slot.photos[0].link.replace('{width}','1000').replace('{height}', '1000'))
 					.replace("{{Tags}}",tags.join(' '))
-					.replace("{{Price}}", slot.params.find(x=> x.key='price').value.label)
+					.replace("{{Price}}", priceStr)
 					.replace("{{SliderInfo}}", '1/'+ slot.photos.length);
 					
 document.body.appendChild(newSlotEl);	
