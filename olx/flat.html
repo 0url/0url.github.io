@@ -31,7 +31,7 @@ width: 100%;
   
 }
 
-div[IsMark="1"]
+div[ismark="1"]
 {
 background-color: #00c717;  
 }
@@ -248,7 +248,7 @@ newSlotEl.className = 'slot';
 
 if(MarkId && MarkId == slot.id)
 {
-newSlotEl.IsMark = '1';
+newSlotEl.setAttribute('ismark', '1');
 if(index > 0)
 {
 MarkId = slots[index-1].id;
