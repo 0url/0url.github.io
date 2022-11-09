@@ -233,7 +233,7 @@ slots.forEach((slot) => {
 if((showRieltors || slot.IsOwner === true) && !slot.IsAd) {
 let tags = [...new Set([...[slot.IsOwner === true? '#Власник' : '#Ріелтор'], ...GetTags(slot.title) ,...GetTags(slot.description)])];
 
-tags.push(`<a href="#{slot.id}">#+slot.id</a>`);
+tags.push(`<a href="#${slot.id}">#${slot.id}</a>`);
 const newSlotEl = document.createElement("div");
 					newSlotEl.className = 'slot';
 					
