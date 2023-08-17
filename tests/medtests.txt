@@ -1,0 +1,212 @@
+// ==UserScript==
+// @name         New Userscript
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       You
+// @match        https://tests.if.ua/
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=if.ua
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    var TestData =
+{
+	CategoryId: 0,
+	Qeustions: []
+};
+
+
+async function StartQuestionsParsing()
+{
+	await AddQuestions();
+
+	let attempts = 1;
+	let repeated = 0;
+
+	while(true)
+	{
+		await CreateStudent(TestData.CategoryId);
+		await GetTest();
+		await GetFinish();
+
+		let isAnyNewQuestion = await AddQuestions();
+
+		if(!isAnyNewQuestion)
+		{
+			repeated+=1;
+		}
+
+		if(repeated > 10 || attempts>5000)
+		{
+			break;
+		}
+
+		attempts+=1;
+		console.clear();
+		console.log("прохід: " + attempts);
+        ShowDownStatus(attempts);
+	}
+
+	CreateResults();
+}
+
+function PrintResults(res)
+{
+	let w = window.open("", new Date().getTime(), `width=${top.width*0.5}, height=${top.height*0.7}`);
+	w.document.open();
+
+	res.forEach((item, indx) => {
+
+		w.document.write(`<i>${indx +1}. ${item.q}</i><br><b>${item.a}</b><br><br>`);
+
+	});
+
+	w.document.close();
+}
+
+function PrintResultsBody(res)
+{
+	
+	 var page = "";
+
+	res.forEach((item, indx) => {
+
+		page += `<i>${indx +1}. ${item.q}</i><br><b>${item.a}</b><br><br>`;
+
+	});
+
+	top.document.body.innerHTML = page;
+}
+
+async function GetStat()
+{
+	let response = await fetch('/api/Stat');
+	return await response.json();
+}
+
+async function GetFinish()
+{
+	let response = await fetch('/api/finish');
+	//return await response.json();
+}
+
+async function GetTest()
+{
+	let response = await fetch('/api/gettest');
+	return await response.json();
+}
+
+async function CreateStudent(catId)
+{
+
+	let requestJson = {
+		"name":"q",
+		"last_name":"q","group":"q",
+		"category":catId,
+		"lang":1
+		};
+	let response = await fetch('/api/createstudent', {
+    method: 'POST',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer',
+    body: JSON.stringify(requestJson)
+  });
+	return await response.json();
+}
+
+async function AddQuestions()
+{
+	let json =  await GetStat();
+	TestData.CategoryId = json.category;
+
+	let isAnyNewQuestion = false;
+
+	json.stat.forEach((item) =>
+	{
+
+		let checkExistQuestions = TestData.Qeustions.find(obj => {
+			return obj.id === item.question_id;
+		});
+
+		if(!checkExistQuestions) {
+			isAnyNewQuestion = true;
+
+			let question = json.questions.find(obj => {
+				return obj.id === item.question_id;
+			});
+
+			question.true_answer_id = item.true_answer_id;
+
+			TestData.Qeustions.push(question);
+		}
+
+	});
+
+	return isAnyNewQuestion;
+}
+
+
+function CreateResults()
+{
+	let res = [];
+
+	TestData.Qeustions.forEach((item) =>
+	{
+		let answer = item.answers.find(obj => {
+			return obj.id === item.true_answer_id;
+		});
+
+		res.push({q:item.text, a:answer.text});
+
+	});
+
+	PrintResults(res);
+	//PrintResultsBody(res);
+}
+
+    document.body.addEventListener("keyup", (event) => {
+  if (event.isComposing || event.keyCode === 229) {
+
+    return;
+  }
+
+if(event.key == "ArrowUp" && event.code == "ArrowUp")
+{
+	TestData =
+	{
+		CategoryId: 0,
+		Qeustions: []
+	};
+  StartQuestionsParsing();
+}
+
+
+});
+
+    function ShowDownStatus(num)
+{
+ let statusEl = document.getElementById("downloadStatus");
+
+  if(!statusEl)
+  {
+    statusEl = document.createElement('div');
+    statusEl.setAttribute("id","downloadStatus");
+
+    document.body.insertBefore(statusEl, document.body.firstChild);
+  }
+
+  statusEl.innerHTML = `<h1>Прохід: ${num}</h1>`;
+
+}
+
+
+})();
