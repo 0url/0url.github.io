@@ -102,56 +102,14 @@ async function GetTest()
 async function CreateStudent(catId)
 {
 
-	let requestJson = {
-		"name":"q",
-		"last_name":"q","group":"q",
-		"category":catId,
-		"lang":1
-		};
-	let response = await fetch('/api/createstudent', {
-    method: 'POST',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    redirect: 'follow',
-    referrerPolicy: 'no-referrer',
-    body: JSON.stringify(requestJson)
-  });
-	return await response.json();
+return null;
 }
 
 async function AddQuestions()
 {
-	let json =  await GetStat();
-	TestData.CategoryId = json.category;
 
-	let isAnyNewQuestion = false;
 
-	json.stat.forEach((item) =>
-	{
-
-		let checkExistQuestions = TestData.Qeustions.find(obj => {
-			return obj.id === item.question_id;
-		});
-
-		if(!checkExistQuestions) {
-			isAnyNewQuestion = true;
-
-			let question = json.questions.find(obj => {
-				return obj.id === item.question_id;
-			});
-
-			question.true_answer_id = item.true_answer_id;
-
-			TestData.Qeustions.push(question);
-		}
-
-	});
-
-	return isAnyNewQuestion;
+	return null;
 }
 
 
